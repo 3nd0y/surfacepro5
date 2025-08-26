@@ -1,0 +1,14 @@
+[Unit]
+Description=Sync Waydroid battery with host
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sh /usr/bin/bat-sync-waydroid
+WorkingDirectory=/usr/bin
+Restart=Always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=default.target

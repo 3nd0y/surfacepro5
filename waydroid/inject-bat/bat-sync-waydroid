@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Waktu delay update (detik)
+INTERVAL=20
+
+while true; do
+    # Cek apakah Waydroid aktif
+    WAYDROID_STATE=$(waydroid status | grep "Container" | awk '{print $2}')
+    if [ "$WAYDROID_STATE" != "RUNNING" ]; then
+        echo "Waydroid belum aktif, menunggu..."
+        sleep $INTERVAL
+        continue
+    fi
+
+    # Baca host battery
+    if [ -d /sys/class/power_supply/BAT1 ]; then
+        CAP=$(cat /sys/class/power_supply/BAT1/capacity)
+        STATUS=$(cat /sys/class/power_supply/BAT1/status)
+    else
+        echo "BAT1 tidak ditemukan!"
+        sleep $INTERVAL
+        continue
+    fi
+
+    # Map Linux status ke Waydroid
+    case "$STATUS" in
+        "Charging") WAY_STATUS="2" ;;
+        "Discharging") WAY_STATUS="3" ;;
+        "Full") WAY_STATUS="5" ;;
+        *) WAY_STATUS="0" ;;
+    esac
+
+    # Kirim ke Waydroid
+    adb shell dumpsys battery set level $CAP
+    adb shell dumpsys battery set status $STATUS
+    # Tunggu interval
+    sleep $INTERVAL
+done
