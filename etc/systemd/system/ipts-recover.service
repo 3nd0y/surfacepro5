@@ -1,0 +1,16 @@
+[Unit]
+Description=Reset IPTS after suspend
+After=suspend.target
+
+[Service]
+[Service]
+ExecStart=
+ExecStart=/bin/sh -c 'echo 1 > /sys/bus/pci/devices/0000:00:16.4/remove'
+ExecStart=/bin/sh -c 'echo 1 > /sys/bus/pci/rescan'
+ExecStart=/bin/sh -c 'modprobe -r ipts || true'
+ExecStart=/bin/sh -c 'modprobe ipts'
+ExecStart=/bin/sh -c 'systemctl restart iptsd@dev-ipts.service'
+Type=oneshot
+
+[Install]
+WantedBy=suspend.target
