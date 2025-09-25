@@ -1,0 +1,83 @@
+default_border none
+set $mod Mod1
+
+#exec --no-startup-id monitor-sensor
+#exec --no-startup-id swaymsg output * transform 0
+
+# Application for rotate display automatic
+# exec --no-startup-id /home/fmukhtarif/.cargo/bin/rot8
+
+#exec --no-startup-id /home/fmukhtarif/.config/sway/bonjourr.sh
+
+for_window [app_id="yad"] floating enable
+
+# Input keyboard en-US
+input * xkb_layout us
+# Check Touchscreen
+input type:touch map_to_output eDP-1
+#  pointer_accel 0.5
+#  natural_scroll enabled
+#  scroll_factor 1.0
+#  scroll_method two_finger
+#  left_handed disabled
+#  tap enabled
+#  tap_button_map lrm
+#  drag enabled
+#  drag_lock disabled
+#  dwt enabled
+#  middle_emulation enabled
+
+input 1118:31:IPTSD_Virtual_Stylus_045E:001F {
+  map_to_output eDP-1
+}
+
+# Auto sleep and lock screen
+# exec swayidle -w \
+# timeout 600 'swaylock -f -c 000000' \
+# timeout 900 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+# timeout 1800 'systemctl suspend' before-sleep 'swaylock -f -c 000000'
+
+# Reload sway
+bindsym $mod+Shift+c reload
+
+# Menu
+bindsym $mod+d exec $menu
+
+# Shutdown (Alt+Shift+Q)
+bindsym $mod+Shift+q exec systemctl poweroff
+
+# Reboot (Alt+Shift+R)
+bindsym $mod+Shift+r exec systemctl reboot
+
+# Sleep (Alt+Shift+S)
+bindsym $mod+Shift+s exec systemctl suspend
+
+# Terminal
+bindsym $mod+Shift+t exec foot
+
+# Keyboard toggle
+bindsym XF86AudioRaiseVolume exec ~/.config/sway/kbd_toggle.sh
+
+# Log Off
+bindsym $mod+Shift+l exec swaymsg exit
+
+# Volume Down Key (show adjust menu)
+bindsym XF86AudioLowerVolume exec ~/.config/sway/float_control.sh
+
+# Bind screen rotation to keyboard shortcuts (optional)
+bindsym $mod+Ctrl+r exec "swaymsg output * transform 90"
+bindsym $mod+Ctrl+Shift+r exec "swaymsg output * transform 0"
+
+# Take screenshot
+bindgesture swipe:left exec "grim -t jpeg -q 80"
+
+# Auto-rotate using sensor (if supported)
+# exec_always /usr/libexec/iio-sensor-proxy
+
+# Open Chromium
+# exec chromium-browser --new-tab --incognito  http://localhost:8080 --kiosk
+#exec chromium-browser --new-tab  http://localhost:8080
+
+# Open waydroid
+exec waydroid first-launch
+exec ~/.config/sway/scripts/rot-waydroid.sh

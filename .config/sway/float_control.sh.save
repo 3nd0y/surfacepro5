@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# Function to get current volume
+get_current_volume() {
+    current_volume=$(amixer get Master | grep -oP '\d+(?=%)' | head -n 1)
+    if [ -z "$current_volume" ]; then
+        current_volume=50  # Default to 50% if amixer fails
+    fi
+    echo $current_volume
+}
+
+# Function to get current brightness
+get_current_brightness() {
+    current_brightness=$(brightnessctl get | awk '{print int($1/100)}')
+    if [ -z "$current_brightness" ]; then
+        current_brightness=50  # Default to 50% if brightnessctl fails
+    fi
+    echo $current_brightness
+}
+
+# Function to get status waybar
+get_current_waybar() {
+    if pgrep -x "waybar" > /dev/null
+    then
+        current_waybar="TRUE"
+    else
+        current_waybar="FALSE"
+    fi
+}
+
+# Get initial values for volume and brightness
+current_volume=$(get_current_volume)
+current_brightness=$(get_current_brightness)
+get_current_waybar
+
+# Create the GUI with volume and brightness sliders and action buttons
+result=$(yad --title="System Controls" \
+             --center \
+             --form \
+             --field="Bar:SW" $current_waybar \
+             --separator=" " \
+             --field=":SCL" $current_volume \
+             --field="🌗:SCL" $current_brightness \
+             --field="Reboot:FBTN" "systemctl reboot" \
+             --field="Log Off:FBTN" "sway exit" \
+             --field="Shutdown:FBTN" "systemctl poweroff" )
+# systemctl halt
+# systemctl hibernate
+
+# Get the result and action exit code
+#exit_code=$?
+#echo $result
+
+waybars=$(echo "$result" | awk -F' ' '{print $1}')
+volume=$(echo "$result" | awk -F' ' '{print $2}')
+brightness=$(echo "$result" | awk -F' ' '{print $3}')
+
+# Adjust volume if changed
+if [[ ! -z "$volume" ]]; then
+#    echo "volume " $volume"%"
+    amixer set Master $volume% > /dev/null
+fi
+
+# Adjust brightness if changed
+if [[ ! -z "$brightness" ]]; then
+#    echo "brightness " $brightness"%"
+    brightnessctl set $brightness% > /dev/null
+fi
+
+echo "CW: "$current_waybar "  WB: "$waybars
+# Run waybar if true
+if [[ $current_waybar == "FALSE" && $waybars == "TRUE" ]]; then
+    waybar
+else
+    pkill waybar
+fi
+
+#echo $volume $brightness
+#!/bin/bash
+
+# Function to get current volume
+get_current_volume() {
+    current_volume=$(amixer get Master | grep -oP '\d+(?=%)' | head -n 1)
+    if [ -z "$current_volume" ]; then
+        current_volume=50  # Default to 50% if amixer fails
+    fi
+    echo $current_volume
+}
+
+# Function to get current brightness
+get_current_brightness() {
+    current_brightness=$(brightnessctl get | awk '{print int($1/100)}')
+    if [ -z "$current_brightness" ]; then
+        current_brightness=50  # Default to 50% if brightnessctl fails
+    fi
+    echo $current_brightness
+}
+
+# Function to get status waybar
+get_current_waybar() {
+    if pgrep -x "waybar" > /dev/null
+    then
+        current_waybar="TRUE"
+    else
+        current_waybar="FALSE"
+    fi
+}
+
+# Get initial values for volume and brightness
+current_volume=$(get_current_volume)
+current_brightness=$(get_current_brightness)
+get_current_waybar
+
+# Create the GUI with volume and brightness sliders and action buttons
+result=$(yad --title="System Controls" \
+             --center \
+             --form \
+             --field="Bar:SW" $current_waybar \
+             --separator=" " \
+             --field=":SCL" $current_volume \
+             --field="🌗:SCL" $current_brightness \
+             --field="Reboot:FBTN" "systemctl reboot" \
+             --field="Log Off:FBTN" "sway exit" \
+             --field="Shutdown:FBTN" "systemctl poweroff" )
+# systemctl halt
+# systemctl hibernate
+
+# Get the result and action exit code
+#exit_code=$?
+#echo $result
+
+waybars=$(echo "$result" | awk -F' ' '{print $1}')
+volume=$(echo "$result" | awk -F' ' '{print $2}')
+brightness=$(echo "$result" | awk -F' ' '{print $3}')
+
+# Adjust volume if changed
+if [[ ! -z "$volume" ]]; then
+#    echo "volume " $volume"%"
+    amixer set Master $volume% > /dev/null
+fi
+
+# Adjust brightness if changed
+if [[ ! -z "$brightness" ]]; then
+#    echo "brightness " $brightness"%"
+    brightnessctl set $brightness% > /dev/null
+fi
+
+echo "CW: "$current_waybar "  WB: "$waybars
+# Run waybar if true
+if [[ $current_waybar == "FALSE" && $waybars == "TRUE" ]]; then
+    waybar
+else
+    pkill waybar
+fi
+
+#echo $volume $brightness
