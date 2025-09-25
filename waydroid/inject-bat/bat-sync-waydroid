@@ -31,8 +31,8 @@ while true; do
     esac
 
     # Kirim ke Waydroid
-    adb shell dumpsys battery set level $CAP
-    adb shell dumpsys battery set status $STATUS
+    waydroid shell dumpsys battery set level $CAP
+    waydroid shell dumpsys battery set status $STATUS
     # Tunggu interval
     sleep $INTERVAL
 done
