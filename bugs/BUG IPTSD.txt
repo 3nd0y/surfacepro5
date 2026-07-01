@@ -1,0 +1,37 @@
+** BUG IPTSD **
+
+Problem: Everytime wakeup or connect charger, touch screen is not respond
+Solution: stop iptsd service then reload module ipts and restart service
+
+
+Step:
+check service name
+fmukhtarif@fedora:~$ sudo iptsd-find-service
+[14:33:10.785] [warning] iptsd-find-service is deprecated, please use iptsd-systemd
+iptsd@dev-hidraw3.service
+fmukhtarif@fedora:~$ sudo modprobe -r ipts
+fmukhtarif@fedora:~$ sudo modprobe ipts
+fmukhtarif@fedora:~$ sudo systemctl start iptsd@dev-hidraw3.service
+fmukhtarif@fedora:~$ systemctl status iptsd@dev-hidraw3.service
+● iptsd@dev-hidraw3.service - Intel Precise Touch & Stylus Daemon
+     Loaded: loaded (/usr/lib/systemd/system/iptsd@.service; static)
+    Drop-In: /usr/lib/systemd/system/service.d
+             └─10-timeout-abort.conf
+             /etc/systemd/system/iptsd@.service.d
+             └─override.conf
+     Active: active (running) since Wed 2026-07-01 14:34:32 WIB; 6s ago
+ Invocation: 2a49c4c2ba4f4ef09cc6bef37a996888
+       Docs: https://github.com/linux-surface/iptsd
+   Main PID: 58282 (iptsd)
+      Tasks: 1 (limit: 4533)
+     Memory: 1.6M (peak: 2.1M)
+        CPU: 13ms
+     CGroup: /system.slice/system-iptsd.slice/iptsd@dev-hidraw3.service
+             └─58282 /usr/bin/iptsd /dev/hidraw3
+
+Jul 01 14:34:32 fedora systemd[1]: Started iptsd@dev-hidraw3.service - Intel Precise Touch & Stylus Daemon.
+Jul 01 14:34:32 fedora iptsd[58282]: [14:34:32.133] [info] Loading config /usr/share/iptsd/surface-pro-6.conf.
+Jul 01 14:34:32 fedora iptsd[58282]: [14:34:32.134] [info] Loading config /etc/iptsd.conf.
+Jul 01 14:34:32 fedora iptsd[58282]: [14:34:32.139] [info] Connected to device 045E:001F
+Jul 01 14:34:32 fedora iptsd[58282]: [14:34:32.139] [info] Running in Touchscreen mode
+
